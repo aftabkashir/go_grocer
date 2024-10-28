@@ -19,16 +19,85 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController _searchTextController = TextEditingController();
+  final FocusNode _searchTextFocusNode = FocusNode();
+
+  final List<Map<String, dynamic>> catInfo = [
+    {'imgPath': 'assets/images/cat/fruits.png', 'catText': 'Fruits'},
+    {'imgPath': 'assets/images/cat/veg.png', 'catText': 'Vegetables'},
+    {'imgPath': 'assets/images/cat/Spinach.png', 'catText': 'Herbs'},
+    {'imgPath': 'assets/images/cat/nuts.png', 'catText': 'Nuts'},
+    {'imgPath': 'assets/images/cat/spices.png', 'catText': 'Spices'},
+    {'imgPath': 'assets/images/cat/grains.png', 'catText': 'Grains'},
+  ];
+
+  @override
+  void dispose() {
+    _searchTextController.dispose();
+    _searchTextFocusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final Utils utils = Utils(context);
-    final themeState = utils.getTheme;
     final Color color = Utils(context).color;
     Size size = utils.getScreenSize;
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
+            // Logo at the top
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: Image.asset(
+                'assets/images/logo.png',
+                height: 50, // Set the logo height
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            // Search Bar
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                height: 30,
+                child: TextField(
+                  focusNode: _searchTextFocusNode,
+                  controller: _searchTextController,
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                  style: TextStyle(color: color),
+                  decoration: InputDecoration(
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.greenAccent, width: 1),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.greenAccent, width: 1),
+                    ),
+                    hintText: "Search here",
+                    hintStyle: TextStyle(color: color.withOpacity(0.5)),
+                    prefixIcon: Icon(Icons.search, color: color),
+                    suffix: IconButton(
+                      onPressed: () {
+                        _searchTextController.clear();
+                        _searchTextFocusNode.unfocus();
+                      },
+                      icon: Icon(
+                        Icons.close,
+                        color: _searchTextFocusNode.hasFocus ? Colors.red : color,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            // Swiper and remaining content
             SizedBox(
               height: size.height * 0.33,
               child: Swiper(
@@ -44,12 +113,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     alignment: Alignment.bottomCenter,
                     builder: DotSwiperPaginationBuilder(
                         color: Colors.white, activeColor: Colors.red)),
-                // control: const SwiperControl(color: Colors.black),
               ),
             ),
-            const SizedBox(
-              height: 6,
-            ),
+            const SizedBox(height: 6),
             TextButton(
               onPressed: () {
                 GlobalMethods.nevigateTo(
@@ -62,9 +128,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 textSize: 20,
               ),
             ),
-            const SizedBox(
-              height: 6,
-            ),
+            const SizedBox(height: 6),
+
+            // On Sale Section
             Row(
               children: [
                 RotatedBox(
@@ -77,19 +143,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         textSize: 22,
                         isTitle: true,
                       ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      const Icon(
-                        IconlyLight.discount,
-                        color: Colors.red,
-                      ),
+                      const SizedBox(width: 5),
+                      const Icon(IconlyLight.discount, color: Colors.red),
                     ],
                   ),
                 ),
-                const SizedBox(
-                  width: 8,
-                ),
+                const SizedBox(width: 8),
                 Flexible(
                   child: SizedBox(
                     height: size.height * 0.24,
@@ -105,9 +164,50 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            const SizedBox(
-              height: 10,
+            const SizedBox(height: 10),
+
+            // Categories Section (before "Our Products")
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Row(
+                children: [
+                  TextWidget(
+                    text: 'Categories',
+                    color: color,
+                    textSize: 22,
+                    isTitle: true,
+                  ),
+                ],
+              ),
             ),
+            SizedBox(
+              height: 100,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: catInfo.length,
+                itemBuilder: (ctx, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Column(
+                      children: [
+                        CircleAvatar(
+                          radius: 30,
+                          backgroundImage: AssetImage(catInfo[index]['imgPath']),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          catInfo[index]['catText'],
+                          style: TextStyle(color: color, fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // "Our Products" Section
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -119,7 +219,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     textSize: 22,
                     isTitle: true,
                   ),
-                  // const Spacer(),
                   TextButton(
                     onPressed: () {
                       GlobalMethods.nevigateTo(
@@ -135,15 +234,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
+
+            // Product GridView
             GridView.count(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               crossAxisCount: 2,
               padding: EdgeInsets.zero,
-              // crossAxisSpacing: 10,
               childAspectRatio: size.width / (size.height * 0.61),
-              children: List.generate(
-                  14, (index) {
+              children: List.generate(14, (index) {
                 return ChangeNotifierProvider.value(
                   value: null,
                   child: const FeedsWidget(),
