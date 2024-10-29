@@ -6,8 +6,8 @@ import 'package:go_grocer/screens/auth/register.dart';
 import 'package:go_grocer/screens/btm_bar.dart';
 import 'package:go_grocer/services/global_methods.dart';
 import 'package:go_grocer/widgets/text_widgets.dart';
-
 import '../../consts/constss.dart';
+import '../../services/utils.dart';
 import '../../widgets/auth_button.dart';
 import '../../widgets/google_button.dart';
 
@@ -25,9 +25,9 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passFocusNode = FocusNode();
   final _formKey = GlobalKey<FormState>();
   var _obscureText = true;
+
   @override
   void dispose() {
-    // TODO: implement dispose
     _emailTextController.dispose();
     _passTextController.dispose();
     _passFocusNode.dispose();
@@ -44,6 +44,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final Utils utils = Utils(context);
+    final Color color = Utils(context).color;
+    Size size = utils.getScreenSize;
     return Scaffold(
       body: Stack(
         children: [
@@ -67,11 +70,24 @@ class _LoginScreenState extends State<LoginScreen> {
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center, // Centered alignment
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   const SizedBox(
-                    height: 120.0,
+                    height: 60.0, // Adjusted spacing
+                  ),
+                  // Logo added here
+                  SizedBox(
+                    //height: 100, // Height of the logo
+                    child: Image.asset(
+                      'assets/images/logo.png',
+                      height: size.width * 0.20,
+                      width: size.width * 0.50,// Path to your logo
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20.0, // Space between logo and text
                   ),
                   TextWidget(
                     text: 'Welcome Back',
@@ -111,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             style: const TextStyle(color: Colors.white),
                             decoration: const InputDecoration(
                               hintText: 'Email',
-                              hintStyle: const TextStyle(color: Colors.white),
+                              hintStyle: TextStyle(color: Colors.white),
                               enabledBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(color: Colors.white),
                               ),
@@ -123,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           const SizedBox(
                             height: 10,
                           ),
-                          //password
+                          // Password
                           TextFormField(
                             textInputAction: TextInputAction.done,
                             onEditingComplete: () {
@@ -175,8 +191,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: TextButton(
                       onPressed: () {
                         Navigator.pushReplacementNamed(
-                            context,
-                            ForgetPasswordScreen.routeName,
+                          context,
+                          ForgetPasswordScreen.routeName,
                         );
                       },
                       child: const Text(
@@ -195,7 +211,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 10,
                   ),
                   AuthButton(
-                    fct:_submitFormonLogin,
+                    fct: _submitFormonLogin,
                     buttonText: 'Sign in',
                   ),
                   const SizedBox(
@@ -238,8 +254,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   AuthButton(
                     fct: () {
                       Navigator.pushReplacementNamed(
-                          context,
-                          BottomBarScreen.routeName,
+                        context,
+                        BottomBarScreen.routeName,
                       );
                     },
                     buttonText: 'Continue as a guest',
@@ -251,26 +267,31 @@ class _LoginScreenState extends State<LoginScreen> {
                   RichText(
                     text: TextSpan(
                       text: 'Don\'t have an account?',
-                      style:  const TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 18,),
+                        fontSize: 18,
+                      ),
                       children: [
-                        TextSpan(text: '   Sign up',
-                        style: const TextStyle(
-                          color: Colors.lightBlue,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,),
-                            recognizer: TapGestureRecognizer()..onTap =(){
-                          GlobalMethods.nevigateTo(ctx: context, routeName: ResisterScreen.routeName);
-                            }
+                        TextSpan(
+                          text: '   Sign up',
+                          style: const TextStyle(
+                            color: Colors.lightBlue,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              GlobalMethods.nevigateTo(
+                                  ctx: context, routeName: ResisterScreen.routeName);
+                            },
                         ),
-                      ]
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );

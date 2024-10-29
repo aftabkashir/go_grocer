@@ -55,7 +55,7 @@ class _MyAppState extends State<MyApp> {
             debugShowCheckedModeBanner: false,
             title: 'Flutter Demo',
             theme: Styles.themeData(themeProvider.getDarkTheme, context),
-            home: const BottomBarScreen(), // Set your initial screen here
+            home: const LoginScreen(), // Set your initial screen here
             routes: {
               OnSaleScreen.routeName: (ctx) => const OnSaleScreen(),
               FeedsScreen.routeName: (ctx) => const FeedsScreen(),
@@ -66,6 +66,7 @@ class _MyAppState extends State<MyApp> {
               ResisterScreen.routeName: (ctx) => const ResisterScreen(),
               LoginScreen.routeName: (ctx) => const LoginScreen(),
               ForgetPasswordScreen.routeName: (ctx) => const ForgetPasswordScreen(),
+              BottomBarScreen.routeName: (ctx) => const BottomBarScreen(),
             },
           );
         },

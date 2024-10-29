@@ -3,9 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:go_grocer/screens/auth/login.dart';
-
 import '../../consts/constss.dart';
-import '../../services/global_methods.dart';
 import '../../services/utils.dart';
 import '../../widgets/auth_button.dart';
 import '../../widgets/text_widgets.dart';
@@ -30,6 +28,7 @@ class _ResisterScreenState extends State<ResisterScreen> {
   final _addressFocusNode = FocusNode();
 
   bool _obscureText = true;
+
   @override
   void dispose() {
     _fullNameController.dispose();
@@ -47,20 +46,22 @@ class _ResisterScreenState extends State<ResisterScreen> {
     FocusScope.of(context).unfocus();
     if (isValid) {
       _formKey.currentState!.save();
+      // Add your registration logic here
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Utils(context).getTheme;
-    Color color = Utils(context).color;
+    final Utils utils = Utils(context);
+    final Color color = Utils(context).color;
+    Size size = utils.getScreenSize;
+
     return Scaffold(
       body: Stack(
         children: <Widget>[
           Swiper(
             duration: 800,
             autoplayDelay: 6000,
-
             itemBuilder: (BuildContext context, int index) {
               return Image.asset(
                 Constss.authImagesPaths[index],
@@ -69,8 +70,6 @@ class _ResisterScreenState extends State<ResisterScreen> {
             },
             autoplay: true,
             itemCount: Constss.authImagesPaths.length,
-
-            // control: const SwiperControl(),
           ),
           Container(
             color: Colors.black.withOpacity(0.7),
@@ -82,40 +81,49 @@ class _ResisterScreenState extends State<ResisterScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                const SizedBox(
-                  height: 60.0,
-                ),
+                const SizedBox(height: 60.0),
                 InkWell(
                   borderRadius: BorderRadius.circular(12),
-                  onTap: () =>
-                      Navigator.canPop(context) ? Navigator.pop(context) : null,
+                  onTap: () => Navigator.canPop(context) ? Navigator.pop(context) : null,
                   child: const Icon(
                     IconlyLight.arrowLeft2,
                     color: Colors.white,
                     size: 24,
                   ),
                 ),
-                const SizedBox(
-                  height: 40.0,
+                const SizedBox(height: 20.0),
+                // Add the logo here
+                Center(
+                  child: Image.asset(
+                    'assets/images/logo.png', // Update the path as needed
+                    height: size.width * 0.20,
+                    width: size.width * 0.50, // Path to your logo
+                    fit: BoxFit.contain, // Adjust the width as needed
+                  ),
                 ),
-                TextWidget(
-                  text: 'Welcome',
-                  color: Colors.white,
-                  textSize: 30,
-                  isTitle: true,
+                const SizedBox(height: 20.0), // Space between logo and text
+                // Center the welcome text and the sign-up prompt
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextWidget(
+                        text: 'Welcome',
+                        color: Colors.white,
+                        textSize: 30,
+                        isTitle: true,
+                      ),
+                      const SizedBox(height: 8),
+                      TextWidget(
+                        text: "Sign up to continue!",
+                        color: Colors.white,
+                        textSize: 18,
+                        isTitle: false,
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(
-                  height: 8,
-                ),
-                TextWidget(
-                  text: "Sign up to continue!",
-                  color: Colors.white,
-                  textSize: 18,
-                  isTitle: false,
-                ),
-                const SizedBox(
-                  height: 30.0,
-                ),
+                const SizedBox(height: 30.0),
                 Form(
                   key: _formKey,
                   child: Column(
@@ -148,9 +156,7 @@ class _ResisterScreenState extends State<ResisterScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      const SizedBox(height: 20),
                       TextFormField(
                         focusNode: _emailFocusNode,
                         textInputAction: TextInputAction.next,
@@ -180,10 +186,8 @@ class _ResisterScreenState extends State<ResisterScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      //Password
+                      const SizedBox(height: 20),
+                      // Password
                       TextFormField(
                         focusNode: _passFocusNode,
                         obscureText: _obscureText,
@@ -226,10 +230,7 @@ class _ResisterScreenState extends State<ResisterScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-
+                      const SizedBox(height: 20),
                       TextFormField(
                         focusNode: _addressFocusNode,
                         textInputAction: TextInputAction.done,
@@ -237,7 +238,7 @@ class _ResisterScreenState extends State<ResisterScreen> {
                         controller: _addressTextController,
                         validator: (value) {
                           if (value!.isEmpty || value.length < 10) {
-                            return "Please enter a valid  address";
+                            return "Please enter a valid address";
                           } else {
                             return null;
                           }
@@ -262,9 +263,7 @@ class _ResisterScreenState extends State<ResisterScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 5.0,
-                ),
+                const SizedBox(height: 5.0),
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
@@ -291,28 +290,24 @@ class _ResisterScreenState extends State<ResisterScreen> {
                     _submitFormOnRegister();
                   },
                 ),
-                const SizedBox(
-                  height: 12,
-                ),
+                const SizedBox(height: 12),
                 RichText(
                   text: TextSpan(
                       text: 'Already a user?',
-                      style: const TextStyle(color: Colors.white, fontSize: 18),
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
                       children: <TextSpan>[
                         TextSpan(
-                            text: '  Sign in',
-                            style: const TextStyle(
+                          text: ' Log in',
+                          style: const TextStyle(
                               color: Colors.lightBlue,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                Navigator.pushReplacementNamed(
-                                  context,
-                                  LoginScreen.routeName,
-                                );
-                              }),
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.pushReplacementNamed(
+                                  context, LoginScreen.routeName);
+                            },
+                        )
                       ]),
                 ),
               ],
