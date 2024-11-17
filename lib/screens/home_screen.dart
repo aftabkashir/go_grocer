@@ -50,57 +50,80 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Logo at the top
-            Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: SizedBox(
-                child: Image.asset(
-                  'assets/images/logo.png',
-                  height: size.width * 0.20,
-                  width: size.width * 0.50,
+            // Background container wrapping top content
+            Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(25),
+                  bottomRight: Radius.circular(25),
                 ),
-              ),
-            ),
-
-            // Search Bar
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: SizedBox(
-                height: 60,
-                child: TextField(
-                  focusNode: _searchTextFocusNode,
-                  controller: _searchTextController,
-                  onChanged: (value) {
-                    setState(() {});
-                  },
-                  style: TextStyle(color: color),
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Colors.greenAccent, width: 2),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Colors.greenAccent, width: 2),
-                    ),
-                    hintText: "Search here",
-                    hintStyle: TextStyle(color: color.withOpacity(0.5)),
-                    prefixIcon: Icon(Icons.search, color: color),
-                    suffix: IconButton(
-                      onPressed: () {
-                        _searchTextController.clear();
-                        _searchTextFocusNode.unfocus();
-                      },
-                      icon: Icon(
-                        Icons.close,
-                        color: _searchTextFocusNode.hasFocus ? Colors.red : color,
+              ), // Use card color as the background
+              child: Padding(
+                padding: const EdgeInsets.only(top: 25),
+                child: Column(
+                  children: [
+                    // Logo at the top
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: SizedBox(
+                        child: Image.asset(
+                          'assets/images/logo.png',
+                          height: size.width * 0.12,
+                          width: size.height * 1,
+                          alignment: Alignment.topCenter,
+                        ),
                       ),
                     ),
-                  ),
+
+                    // Search Bar
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 14, top: 5, right: 14, bottom: 10),
+                      child: SizedBox(
+                        height: 60,
+                        child: TextField(
+                          focusNode: _searchTextFocusNode,
+                          controller: _searchTextController,
+                          onChanged: (value) {
+                            setState(() {});
+                          },
+                          style: TextStyle(color: color),
+                          decoration: InputDecoration(
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                  color: Colors.greenAccent, width: 2),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                  color: Colors.greenAccent, width: 2),
+                            ),
+                            hintText: "Search here",
+                            hintStyle: TextStyle(color: color.withOpacity(0.5)),
+                            prefixIcon: Icon(Icons.search, color: color),
+                            suffix: IconButton(
+                              onPressed: () {
+                                _searchTextController.clear();
+                                _searchTextFocusNode.unfocus();
+                              },
+                              icon: Icon(
+                                Icons.close,
+                                color: _searchTextFocusNode.hasFocus
+                                    ? Colors.red
+                                    : color,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
                 ),
               ),
             ),
-            const SizedBox(height: 10),
 
             // Categories Section
             Row(
@@ -132,7 +155,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           CircleAvatar(
                             radius: 40,
-                            backgroundImage: AssetImage(catInfo[index]['imgPath']),
+                            backgroundImage:
+                                AssetImage(catInfo[index]['imgPath']),
                           ),
                           const SizedBox(height: 5),
                           Text(
@@ -146,37 +170,45 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 5),
 
             // Custom Swiper
             SizedBox(
+
               height: size.height * 0.25,
               width: size.width * 1,
               child: Swiper(
+                loop: true, // Ensures infinite looping
+                viewportFraction: 0.8, // Shrinks each item slightly to show parts of adjacent ones
+                scale: 0.9,
                 layout: SwiperLayout.STACK,
                 autoplay: true,
                 customLayoutOption: CustomLayoutOption(
                   startIndex: 2,
                   stateCount: 3,
-                )..addRotate([
-                  -60.0 / 180 * 3.14,
-                  0.0,
-                  -40.0 / 180 * 3.14,
-                ])..addTranslate([
-                  const Offset(-370.0, -40.0),
-                  const Offset(0.0, 0.0),
-                  const Offset(370.0, -40.0),
-                ]),
-                itemWidth: 350.0,
-                itemHeight: 200.0,
+                )
+                  ..addRotate([
+                    -60.0 / 180 * 3.14,
+                    0.0,
+                    -40.0 / 180 * 3.14,
+                  ])
+                  ..addTranslate([
+                    const Offset(-370.0, -40.0),
+                    const Offset(0.0, 0.0),
+                    const Offset(370.0, -40.0),
+                  ]),
+                itemWidth: 380.0,
+                itemHeight: 150.0,
                 itemBuilder: (context, index) {
                   return ClipRRect(
-                    borderRadius: BorderRadius.circular(20), // Apply border radius
+                    borderRadius:
+                        BorderRadius.circular(15), // Apply border radius
                     child: Container(
-                      color: Colors.grey,
+                      color: Colors.black,
                       child: Image.asset(
                         Constss.offerImages[index], // Your offer images here
-                        fit: BoxFit.cover, // Ensure the image covers the entire area
+                        fit: BoxFit
+                            .cover, // Ensure the image covers the entire area
                       ),
                     ),
                   );
@@ -184,26 +216,32 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemCount: Constss.offerImages.length,
               ),
             ),
-            const SizedBox(height: 5),
-
-            // Centered "View all" Text
-            Center(
-              child: TextButton(
-                onPressed: () {
-                  GlobalMethods.nevigateTo(
-                      ctx: context, routeName: OnSaleScreen.routeName);
-                },
-                child: TextWidget(
-                  text: 'View all',
-                  maxLines: 1,
-                  color: Colors.blue,
-                  textSize: 20,
-                ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextWidget(
+                    text: 'Sale products',
+                    color: color,
+                    textSize: 22,
+                    isTitle: true,
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      GlobalMethods.nevigateTo(
+                          ctx: context, routeName: OnSaleScreen.routeName);
+                    },
+                    child: TextWidget(
+                      text: 'View all',
+                      maxLines: 1,
+                      color: Colors.blue,
+                      textSize: 20,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 5),
-
-            // On Sale Section
             Row(
               children: [
                 RotatedBox(

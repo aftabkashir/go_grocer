@@ -96,9 +96,10 @@ class _ResisterScreenState extends State<ResisterScreen> {
                 Center(
                   child: Image.asset(
                     'assets/images/logo.png', // Update the path as needed
-                    height: size.width * 0.20,
-                    width: size.width * 0.50, // Path to your logo
-                    fit: BoxFit.contain, // Adjust the width as needed
+                    height: size.width * 0.14,
+                    width: size.width * 0.45,// Path to your logo
+                    fit: BoxFit.contain,
+                    alignment: Alignment.center,// Adjust the width as needed
                   ),
                 ),
                 const SizedBox(height: 20.0), // Space between logo and text
