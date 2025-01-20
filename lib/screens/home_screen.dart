@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:provider/provider.dart';
 import '../consts/constss.dart';
+import '../inner_screens/cat_screen.dart';
 import '../inner_screens/feeds_screen.dart';
 import '../inner_screens/on_sale_screen.dart';
+import '../models/products_model.dart';
+import '../providers/product_provider.dart';
 import '../services/global_methods.dart';
 import '../services/utils.dart';
 import '../widgets/feed_items.dart';
@@ -43,6 +46,11 @@ class _HomeScreenState extends State<HomeScreen> {
     final Utils utils = Utils(context);
     final Color color = Utils(context).color;
     Size size = utils.getScreenSize;
+    final productProviders = Provider.of<ProductsProvider>(context);
+    List<ProductModel> allProducts = productProviders.getProducts;
+    List<ProductModel> productsOnSale= productProviders.getOnSaleProducts;
+    // final catName = ModalRoute.of(context)!.settings.arguments as String;
+    // List<ProductModel> productByCat = productProviders.findByCategory(catName);
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -55,12 +63,13 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
                 borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(25),
-                  bottomRight: Radius.circular(25),
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
                 ),
-              ), // Use card color as the background
+              ),
+              // Use card color as the background
               child: Padding(
-                padding: const EdgeInsets.only(top: 25),
+                padding: const EdgeInsets.only(top: 30),
                 child: Column(
                   children: [
                     // Logo at the top
@@ -75,11 +84,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 10,),
 
                     // Search Bar
                     Padding(
                       padding: const EdgeInsets.only(
-                          left: 14, top: 5, right: 14, bottom: 10),
+                          left: 20, top: 5, right: 20, bottom: 5),
                       child: SizedBox(
                         height: 60,
                         child: TextField(
@@ -119,11 +129,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),
             ),
+            const SizedBox(height: 5,),
 
             // Categories Section
             Row(
@@ -139,6 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
+            const SizedBox(height: 5,),
             SizedBox(
               height: 120,
               child: ListView.builder(
@@ -150,6 +162,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: GestureDetector(
                       onTap: () {
                         // Handle category tap
+                        Navigator.pushNamed(
+                            context,
+                            CategoryScreen.routeName,
+                            arguments: catInfo[index]['catText'],
+                        );
                       },
                       child: Column(
                         children: [
@@ -161,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           const SizedBox(height: 5),
                           Text(
                             catInfo[index]['catText'],
-                            style: TextStyle(color: color, fontSize: 14),
+                            style: TextStyle(color: color, fontSize: 16),
                           ),
                         ],
                       ),
@@ -174,12 +191,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
             // Custom Swiper
             SizedBox(
-
               height: size.height * 0.25,
               width: size.width * 1,
               child: Swiper(
                 loop: true, // Ensures infinite looping
-                viewportFraction: 0.8, // Shrinks each item slightly to show parts of adjacent ones
+                viewportFraction:
+                    0.8, // Shrinks each item slightly to show parts of adjacent ones
                 scale: 0.9,
                 layout: SwiperLayout.STACK,
                 autoplay: true,
@@ -266,12 +283,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: SizedBox(
                     height: size.height * 0.25,
                     child: ListView.builder(
-                      itemCount: 10,
+                      itemCount: productsOnSale.length< 10?productsOnSale.length:10,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (ctx, index) {
                         return ChangeNotifierProvider.value(
                           value: null,
-                          child: const OnSaleWidget(),
+                          child:ChangeNotifierProvider.value(
+                              value: productsOnSale[index],
+                              child: const OnSaleWidget()),
                         );
                       },
                     ),
@@ -316,10 +335,15 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisCount: 2,
               padding: EdgeInsets.zero,
               childAspectRatio: size.width / (size.height * 0.61),
-              children: List.generate(14, (index) {
+              children: List.generate(
+                  allProducts.length < 4
+                      ? allProducts.length
+                      : 4, (index) {
                 return ChangeNotifierProvider.value(
-                  value: null,
-                  child: const FeedsWidget(),
+                      value: allProducts[index],
+                      child: FeedsWidget(
+
+                  ),
                 );
               }),
             ),

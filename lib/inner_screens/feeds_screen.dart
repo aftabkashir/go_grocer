@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_grocer/consts/constss.dart';
+import 'package:go_grocer/models/products_model.dart';
+import 'package:go_grocer/providers/product_provider.dart';
 import 'package:go_grocer/widgets/feed_items.dart';
+import 'package:provider/provider.dart';
 
 import '../services/utils.dart';
 import '../widgets/back_widget.dart';
@@ -27,6 +31,9 @@ class _FeedsScreenState extends State<FeedsScreen> {
   @override
   Widget build(BuildContext context) {
     final Color color = Utils(context).color;
+    Size size =Utils(context).getScreenSize;
+    final productProviders = Provider.of<ProductsProvider>(context);
+    List<ProductModel> allProducts = productProviders.getProducts;
 
     return Scaffold(
       appBar: AppBar(
@@ -95,9 +102,11 @@ class _FeedsScreenState extends State<FeedsScreen> {
                 // mainAxisSpacing: 10,
                 childAspectRatio: 0.79, // Adjusted aspect ratio
                 children: List.generate(
-                  18,
+                  allProducts.length,
                   (index) {
-                    return const FeedsWidget();
+                    return   ChangeNotifierProvider.value(
+                        value: allProducts[index],
+                        child:  const FeedsWidget());
                   },
                 ),
               ),

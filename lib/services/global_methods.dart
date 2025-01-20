@@ -49,7 +49,11 @@ class GlobalMethods{
                 ),
               ),
               TextButton(
-                onPressed: () {fct();},
+                onPressed: () {fct();
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                }
+                },
                 child: TextWidget(
                   text: 'Ok',
                   color: Colors.red,

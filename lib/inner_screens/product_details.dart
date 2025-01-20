@@ -3,6 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:provider/provider.dart';
+import '../providers/cart_provider.dart';
+import '../providers/product_provider.dart';
 import '../services/utils.dart';
 import '../widgets/heart_btn.dart';
 import '../widgets/text_widgets.dart';
@@ -30,13 +33,21 @@ class _ProductDetailsState extends State<ProductDetails> {
   Widget build(BuildContext context) {
     Size size = Utils(context).getScreenSize;
     final Color color = Utils(context).color;
+    final cartProvider = Provider.of<CartProvider>(context);
+    final productProvider = Provider.of<ProductsProvider>(context);
+    final productId = ModalRoute.of(context)!.settings.arguments as String;
+    final getCurrProduct = productProvider.findProById(productId);
+    double usedPrice = getCurrProduct.isOnSale
+        ? getCurrProduct.salePrice
+        : getCurrProduct.price;
+    double totalPrice =usedPrice* int.parse(_quantityTextController.text);
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
           leading: InkWell(
             borderRadius: BorderRadius.circular(12),
             onTap: () =>
-            Navigator.canPop(context) ? Navigator.pop(context) : null,
+                Navigator.canPop(context) ? Navigator.pop(context) : null,
             child: Icon(
               IconlyLight.arrowLeft2,
               color: color,
@@ -49,8 +60,7 @@ class _ProductDetailsState extends State<ProductDetails> {
         Flexible(
           flex: 2,
           child: FancyShimmerImage(
-            imageUrl:
-            'https://w7.pngwing.com/pngs/29/515/png-transparent-plum-fruits-apricot-apricots-natural-foods-food-fruit-thumbnail.png',
+            imageUrl: getCurrProduct.imageUrl,
             boxFit: BoxFit.scaleDown,
             width: size.width,
             // height: screenHeight * .4,
@@ -76,7 +86,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                     children: [
                       Flexible(
                         child: TextWidget(
-                          text: 'Title',
+                          text: getCurrProduct.title,
                           color: color,
                           textSize: 25,
                           isTitle: true,
@@ -99,13 +109,13 @@ class _ProductDetailsState extends State<ProductDetails> {
                       //   isOnSale: true,
                       // ),
                       TextWidget(
-                        text: 'RS: 80',
+                        text: "\Rs ${usedPrice.toStringAsFixed(2)}/",
                         color: color,
                         textSize: 22,
                         isTitle: true,
                       ),
                       TextWidget(
-                        text: '/KG',
+                        text: getCurrProduct.isPiece?'Pcs': '/KG',
                         color: color,
                         textSize: 12,
                         isTitle: false,
@@ -114,9 +124,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                         width: 10,
                       ),
                       Visibility(
-                        visible: true,
+                        visible: getCurrProduct.isOnSale? true : false,
                         child: Text(
-                          'RS: 100',
+                          "\Rs ${getCurrProduct.price.toStringAsFixed(2)}",
                           style: TextStyle(
                               fontSize: 15,
                               color: color,
@@ -171,7 +181,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                         key: const ValueKey('quantity'),
                         keyboardType: TextInputType.none,
                         style: TextStyle(color: color, fontSize: 20),
-
                         maxLines: 1,
                         decoration: const InputDecoration(
                           border: UnderlineInputBorder(),
@@ -211,7 +220,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                 Container(
                   width: double.infinity,
                   padding:
-                  const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+                      const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.secondary,
                     borderRadius: const BorderRadius.only(
@@ -239,7 +248,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                               child: Row(
                                 children: [
                                   TextWidget(
-                                    text: 'Rs: 100/',
+                                    text: "\Rs ${totalPrice.toStringAsFixed(2)}/",
                                     color: color,
                                     textSize: 20,
                                     isTitle: true,
@@ -264,7 +273,14 @@ class _ProductDetailsState extends State<ProductDetails> {
                           color: Colors.green,
                           borderRadius: BorderRadius.circular(10),
                           child: InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              cartProvider.addProductsTocart(
+                                productId: getCurrProduct.id,
+                                quantity: int.parse(
+                                  _quantityTextController.text,
+                                ),
+                              );
+                            },
                             borderRadius: BorderRadius.circular(10),
                             child: Padding(
                                 padding: const EdgeInsets.all(12.0),

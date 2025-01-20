@@ -5,7 +5,6 @@ import 'package:go_grocer/screens/viewed_recently/viewed_recently.dart';
 import 'package:go_grocer/screens/wishlist/wishlist_screen.dart';
 import 'package:go_grocer/services/global_methods.dart';
 import 'package:provider/provider.dart';
-
 import '../provider/dark_theme_provider.dart';
 import '../services/utils.dart';
 import '../widgets/text_widgets.dart';

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_grocer/inner_screens/cat_screen.dart';
 import 'package:go_grocer/widgets/text_widgets.dart';
 import 'package:provider/provider.dart';
 
+import '../inner_screens/product_details.dart';
 import '../provider/dark_theme_provider.dart';
 
 class CategoriesWidget extends StatelessWidget {
@@ -19,7 +21,9 @@ class CategoriesWidget extends StatelessWidget {
     //Size size = MediaQuery.of(context).size;
     double screenWidth = MediaQuery.of(context).size.width;
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.pushNamed(context, CategoryScreen.routeName, arguments: catText);
+      },
       child: Container(
         //height: _screenWidth * 0.6,
         decoration: BoxDecoration(

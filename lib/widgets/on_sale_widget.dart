@@ -4,8 +4,11 @@ import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:go_grocer/services/utils.dart';
 import 'package:go_grocer/widgets/price_widget.dart';
 import 'package:go_grocer/widgets/text_widgets.dart';
+import 'package:provider/provider.dart';
 
 import '../inner_screens/product_details.dart';
+import '../models/products_model.dart';
+import '../providers/cart_provider.dart';
 import '../services/global_methods.dart';
 import 'heart_btn.dart';
 
@@ -17,8 +20,11 @@ class OnSaleWidget extends StatefulWidget {
 }
 
 class _OnSaleWidgetState extends State<OnSaleWidget> {
+
   @override
   Widget build(BuildContext context) {
+    final productModel = Provider.of<ProductModel>(context);
+    final cartProvider = Provider.of<CartProvider>(context);
     final Color color = Utils(context).color;
     Size size = Utils(context).getScreenSize;
     return Padding(
@@ -29,8 +35,9 @@ class _OnSaleWidgetState extends State<OnSaleWidget> {
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: () {
-            GlobalMethods.nevigateTo(
-                ctx: context, routeName: ProductDetails.routeName);
+            Navigator.pushNamed(context, ProductDetails.routeName, arguments: productModel.id);
+            // GlobalMethods.nevigateTo(
+            // ctx: context, routeName: ProductDetails.routeName);
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -42,8 +49,7 @@ class _OnSaleWidgetState extends State<OnSaleWidget> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     FancyShimmerImage(
-                      imageUrl:
-                          'https://w7.pngwing.com/pngs/29/515/png-transparent-plum-fruits-apricot-apricots-natural-foods-food-fruit-thumbnail.png',
+                      imageUrl: productModel.imageUrl,
                       height: size.width * 0.22,
                       width: size.width * 0.22,
                       boxFit: BoxFit.fill,
@@ -54,7 +60,7 @@ class _OnSaleWidgetState extends State<OnSaleWidget> {
                     Column(
                       children: [
                         TextWidget(
-                          text: '1KG',
+                          text: productModel.isPiece? '1Pcs':'1Kg',
                           color: color,
                           textSize: 22,
                           isTitle: true,
@@ -65,7 +71,12 @@ class _OnSaleWidgetState extends State<OnSaleWidget> {
                         Row(
                           children: [
                             GestureDetector(
-                              onTap: () {},
+                              onTap: () {
+                                cartProvider.addProductsTocart(
+                                  productId: productModel.id,
+                                  quantity: 1,
+                                );
+                              },
                               child: Icon(
                                 IconlyLight.bag2,
                                 size: 22,
@@ -82,9 +93,9 @@ class _OnSaleWidgetState extends State<OnSaleWidget> {
                 const SizedBox(
                   height: 5,
                 ),
-                const PriceWidget(
-                  salePrice: 80,
-                  price: 100,
+                PriceWidget(
+                  salePrice: productModel.salePrice,
+                  price: productModel.price,
                   textPrice: '1',
                   isOnSale: true,
                 ),
@@ -92,7 +103,7 @@ class _OnSaleWidgetState extends State<OnSaleWidget> {
                   height: 5,
                 ),
                 TextWidget(
-                  text: 'Product Title',
+                  text: productModel.title,
                   color: color,
                   textSize: 16,
                   isTitle: true,

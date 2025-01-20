@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_grocer/provider/dark_theme_provider.dart';
+import 'package:go_grocer/providers/cart_provider.dart';
+import 'package:go_grocer/providers/product_provider.dart';
 import 'package:go_grocer/screens/viewed_recently/viewed_recently.dart';
 import 'package:provider/provider.dart';
 import 'package:go_grocer/screens/btm_bar.dart'; // Set to your desired initial screen
 import 'consts/theme_data.dart';
+import 'inner_screens/cat_screen.dart';
 import 'inner_screens/feeds_screen.dart';
 import 'inner_screens/on_sale_screen.dart';
 import 'inner_screens/product_details.dart';
@@ -43,8 +46,8 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => themeChangeProvider),
-        // ChangeNotifierProvider(create: (_) => ProductsProvider()),
-        // ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => ProductsProvider()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
         // ChangeNotifierProvider(create: (_) => WishlistProvider()),
         // ChangeNotifierProvider(create: (_) => ViewedProdProvider()),
         // ChangeNotifierProvider(create: (_) => OrdersProvider()),
@@ -55,7 +58,7 @@ class _MyAppState extends State<MyApp> {
             debugShowCheckedModeBanner: false,
             title: 'Flutter Demo',
             theme: Styles.themeData(themeProvider.getDarkTheme, context),
-            home: const LoginScreen(), // Set your initial screen here
+            home: const BottomBarScreen(), // Set your initial screen here
             routes: {
               OnSaleScreen.routeName: (ctx) => const OnSaleScreen(),
               FeedsScreen.routeName: (ctx) => const FeedsScreen(),
@@ -67,6 +70,7 @@ class _MyAppState extends State<MyApp> {
               LoginScreen.routeName: (ctx) => const LoginScreen(),
               ForgetPasswordScreen.routeName: (ctx) => const ForgetPasswordScreen(),
               BottomBarScreen.routeName: (ctx) => const BottomBarScreen(),
+              CategoryScreen.routeName: (ctx) => const CategoryScreen(),
             },
           );
         },
