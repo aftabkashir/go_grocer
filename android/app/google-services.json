@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "638643867710",
+    "project_id": "go-grocer-app",
+    "storage_bucket": "go-grocer-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:638643867710:android:f64cb153d09aee4051816f",
+        "android_client_info": {
+          "package_name": "com.gogrocer.go_grocer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiCgLev5KKzA32Vsq2GA-4Bgni2cTMwWI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

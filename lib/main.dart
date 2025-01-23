@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_grocer/provider/dark_theme_provider.dart';
 import 'package:go_grocer/providers/cart_provider.dart';
@@ -42,41 +43,63 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     getCurrentAppTheme();
   }
-
+final Future<FirebaseApp>_firebaseInitialization = Firebase.initializeApp();
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => themeChangeProvider),
-        ChangeNotifierProvider(create: (_) => ProductsProvider()),
-        ChangeNotifierProvider(create: (_) => CartProvider()),
-        ChangeNotifierProvider(create: (_) => WishlistProvider()),
-        ChangeNotifierProvider(create: (_) => ViewedProdProvider()),
-        // ChangeNotifierProvider(create: (_) => OrdersProvider()),
-      ],
-      child: Consumer<DarkThemeProvider>(
-        builder: (context, themeProvider, child) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Flutter Demo',
-            theme: Styles.themeData(themeProvider.getDarkTheme, context),
-            home: const BottomBarScreen(), // Set your initial screen here
-            routes: {
-              OnSaleScreen.routeName: (ctx) => const OnSaleScreen(),
-              FeedsScreen.routeName: (ctx) => const FeedsScreen(),
-              ProductDetails.routeName: (ctx) => const ProductDetails(),
-              WishlistScreen.routeName: (ctx) => const WishlistScreen(),
-              OrdersScreen.routeName: (ctx) => const OrdersScreen(),
-              ViewedRecentlyScreen.routeName: (ctx) => const ViewedRecentlyScreen(),
-              ResisterScreen.routeName: (ctx) => const ResisterScreen(),
-              LoginScreen.routeName: (ctx) => const LoginScreen(),
-              ForgetPasswordScreen.routeName: (ctx) => const ForgetPasswordScreen(),
-              BottomBarScreen.routeName: (ctx) => const BottomBarScreen(),
-              CategoryScreen.routeName: (ctx) => const CategoryScreen(),
-            },
+    return FutureBuilder(
+      future: _firebaseInitialization,
+      builder: (context, snapshot) {
+        if(snapshot.connectionState == ConnectionState.waiting){
+          return const MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
           );
-        },
-      ),
+        } else if(snapshot.hasError){
+          return const MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: Text('An error occured!'),
+              ),
+            ),
+          );
+        }
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => themeChangeProvider),
+            ChangeNotifierProvider(create: (_) => ProductsProvider()),
+            ChangeNotifierProvider(create: (_) => CartProvider()),
+            ChangeNotifierProvider(create: (_) => WishlistProvider()),
+            ChangeNotifierProvider(create: (_) => ViewedProdProvider()),
+            // ChangeNotifierProvider(create: (_) => OrdersProvider()),
+          ],
+          child: Consumer<DarkThemeProvider>(
+            builder: (context, themeProvider, child) {
+              return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: 'Flutter Demo',
+                theme: Styles.themeData(themeProvider.getDarkTheme, context),
+                home: const LoginScreen(), // Set your initial screen here
+                routes: {
+                  OnSaleScreen.routeName: (ctx) => const OnSaleScreen(),
+                  FeedsScreen.routeName: (ctx) => const FeedsScreen(),
+                  ProductDetails.routeName: (ctx) => const ProductDetails(),
+                  WishlistScreen.routeName: (ctx) => const WishlistScreen(),
+                  OrdersScreen.routeName: (ctx) => const OrdersScreen(),
+                  ViewedRecentlyScreen.routeName: (ctx) => const ViewedRecentlyScreen(),
+                  ResisterScreen.routeName: (ctx) => const ResisterScreen(),
+                  LoginScreen.routeName: (ctx) => const LoginScreen(),
+                  ForgetPasswordScreen.routeName: (ctx) => const ForgetPasswordScreen(),
+                  BottomBarScreen.routeName: (ctx) => const BottomBarScreen(),
+                  CategoryScreen.routeName: (ctx) => const CategoryScreen(),
+                },
+              );
+            },
+          ),
+        );
+      }
     );
   }
 }
