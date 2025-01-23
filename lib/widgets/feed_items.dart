@@ -9,6 +9,7 @@ import 'package:go_grocer/widgets/price_widget.dart';
 import 'package:go_grocer/widgets/text_widgets.dart';
 import 'package:provider/provider.dart';
 import '../models/cart_model.dart';
+import '../providers/wishlist_provider.dart';
 import '../services/utils.dart';
 import 'heart_btn.dart';
 
@@ -40,6 +41,9 @@ class _FeedsWidgetState extends State<FeedsWidget> {
     Size size = Utils(context).getScreenSize;
     final productModel = Provider.of<ProductModel>(context);
     final cartProvider = Provider.of<CartProvider>(context);
+    bool? _isInCart = cartProvider.getCartItems.containsKey(productModel.id);
+    final wishlistProvider = Provider.of<WishlistProvider>(context);
+    bool? _isInWishlist = wishlistProvider.getWishlistItems.containsKey(productModel.id);
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -79,90 +83,108 @@ class _FeedsWidgetState extends State<FeedsWidget> {
                       isTitle: true,
                     ),
                   ),
-                  const Flexible(flex: 1, child: HeartBTN()),
+                  Flexible(
+                    flex: 1,
+                    child: HeartBTN(
+                      productId: productModel.id,
+                      isInWishlist: _isInWishlist,
+                    ),
+                  ),
                 ],
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  flex: 3,
-                  child: PriceWidget(
-                    salePrice: productModel.salePrice,
-                    price: productModel.price,
-                    textPrice: _quantityTextController.text,
-                    isOnSale: productModel.isOnSale,
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 10,
+                right: 10,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    flex: 3,
+                    child: PriceWidget(
+                      salePrice: productModel.salePrice,
+                      price: productModel.price,
+                      textPrice: _quantityTextController.text,
+                      isOnSale: productModel.isOnSale,
+                    ),
                   ),
-                ),
-                const SizedBox(
-                  width: 3,
-                ),
-                Flexible(
-                  child: Row(
-                    children: [
-                      Flexible(
-                        flex: 6,
-                        child: FittedBox(
-                          child: TextWidget(
-                            text: productModel.isPiece ? 'Pcs' : 'Kg',
-                            color: color,
-                            textSize: 20,
-                            isTitle: true,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Flexible(
-                        flex: 3,
-                        child: TextField(
-                          controller: _quantityTextController,
-                          keyboardType: TextInputType.number,
-                          style: TextStyle(
-                            color: color,
-                            fontSize: 18,
-                          ),
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          decoration: const InputDecoration(
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(),
+                  const SizedBox(
+                    width: 3,
+                  ),
+                  Flexible(
+                    child: Row(
+                      children: [
+                        Flexible(
+                          flex: 6,
+                          child: FittedBox(
+                            child: TextWidget(
+                              text: productModel.isPiece ? 'Pcs' : 'Kg',
+                              color: color,
+                              textSize: 20,
+                              isTitle: true,
                             ),
                           ),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp('[0-9]')),
-                          ],
-                          onChanged: (v) {
-                            setState(() {
-                              if (v.isEmpty) {
-                                _quantityTextController.text = '1';
-                              } else {
-                                return;
-                              }
-                            });
-                          },
                         ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Flexible(
+                          flex: 3,
+                          child: TextField(
+                            controller: _quantityTextController,
+                            keyboardType: TextInputType.number,
+                            style: TextStyle(
+                              color: color,
+                              fontSize: 18,
+                            ),
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            decoration: const InputDecoration(
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(),
+                              ),
+                            ),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp('[0-9]')),
+                            ],
+                            onChanged: (v) {
+                              setState(() {
+                                if (v.isEmpty) {
+                                  _quantityTextController.text = '1';
+                                } else {
+                                  return;
+                                }
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
             //const Spacer(),
             SizedBox(
               width: double.infinity,
               height: 45,
               child: TextButton(
-                onPressed: () {
-                  cartProvider.addProductsTocart(
-                    productId: productModel.id,
-                    quantity: int.parse(
-                      _quantityTextController.text,
-                    ),
-                  );
-                },
+                onPressed: _isInCart
+                    ? null
+                    : () {
+                        // if(_isInCart){
+                        //   return;
+                        // }
+                        cartProvider.addProductsTocart(
+                          productId: productModel.id,
+                          quantity: int.parse(
+                            _quantityTextController.text,
+                          ),
+                        );
+                      },
                 style: ButtonStyle(
                     backgroundColor:
                         WidgetStateProperty.all(Theme.of(context).cardColor),
@@ -176,7 +198,7 @@ class _FeedsWidgetState extends State<FeedsWidget> {
                       ),
                     )),
                 child: TextWidget(
-                  text: 'Add to cart',
+                  text: _isInCart ? 'In cart' : 'Add to cart',
                   maxLines: 1,
                   color: color,
                   textSize: 20,

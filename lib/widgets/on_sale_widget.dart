@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../inner_screens/product_details.dart';
 import '../models/products_model.dart';
 import '../providers/cart_provider.dart';
+import '../providers/wishlist_provider.dart';
 import '../services/global_methods.dart';
 import 'heart_btn.dart';
 
@@ -25,6 +26,9 @@ class _OnSaleWidgetState extends State<OnSaleWidget> {
   Widget build(BuildContext context) {
     final productModel = Provider.of<ProductModel>(context);
     final cartProvider = Provider.of<CartProvider>(context);
+    bool? _isInCart = cartProvider.getCartItems.containsKey(productModel.id);
+    final wishlistProvider = Provider.of<WishlistProvider>(context);
+    bool? _isInWishlist = wishlistProvider.getWishlistItems.containsKey(productModel.id);
     final Color color = Utils(context).color;
     Size size = Utils(context).getScreenSize;
     return Padding(
@@ -71,19 +75,24 @@ class _OnSaleWidgetState extends State<OnSaleWidget> {
                         Row(
                           children: [
                             GestureDetector(
-                              onTap: () {
+                              onTap: _isInCart
+                                  ? null
+                                  : () {
                                 cartProvider.addProductsTocart(
                                   productId: productModel.id,
                                   quantity: 1,
                                 );
                               },
                               child: Icon(
-                                IconlyLight.bag2,
+                                _isInCart? IconlyBold.bag2: IconlyLight.bag2,
                                 size: 22,
-                                color: color,
+                                color: _isInCart? Colors.green: color,
                               ),
                             ),
-                            const HeartBTN(),
+                            HeartBTN(
+                              productId: productModel.id,
+                              isInWishlist: _isInWishlist,
+                            ),
                           ],
                         ),
                       ],

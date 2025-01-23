@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    package
     <application
         android:label="go_grocer"
         android:name="${applicationName}"

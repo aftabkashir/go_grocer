@@ -6,6 +6,7 @@ import 'package:go_grocer/screens/home_screen.dart';
 import 'package:go_grocer/screens/user.dart';
 import 'package:provider/provider.dart';
 import '../provider/dark_theme_provider.dart';
+import '../providers/cart_provider.dart';
 import '../widgets/text_widgets.dart';
 import 'cart/cart_screen.dart';
 
@@ -50,6 +51,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
   @override
   Widget build(BuildContext context) {
     final themeState = Provider.of<DarkThemeProvider>(context);
+
     bool isDark = themeState.getDarkTheme;
     return Scaffold(
       // appBar: AppBar(
@@ -78,26 +80,30 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
             label: "Categories",
           ),
           BottomNavigationBarItem(
-            icon: badges.Badge(
-              badgeStyle: badges.BadgeStyle(
-                shape: badges.BadgeShape.circle,
-                badgeColor: Colors.blue,
-                borderRadius: BorderRadius.circular(8),
-                elevation: 0,
-              ),
-              position: badges.BadgePosition.topEnd(
-                  top: -7,
-                  end: -7), // BadgePosition is updated to badges.BadgePosition
-              badgeContent: FittedBox(
-                child: TextWidget(
-                  text: '1',
-                  color: Colors.white,
-                  textSize: 15,
-                ),
-              ),
-              child: Icon(
-                _selectedIndex == 2 ? IconlyBold.buy : IconlyLight.buy,
-              ),
+            icon: Consumer<CartProvider>(
+              builder: (_, myCart, ch) {
+                return badges.Badge(
+                  badgeStyle: badges.BadgeStyle(
+                    shape: badges.BadgeShape.circle,
+                    badgeColor: Colors.blue,
+                    borderRadius: BorderRadius.circular(8),
+                    elevation: 0,
+                  ),
+                  position: badges.BadgePosition.topEnd(
+                      top: -7,
+                      end: -7), // BadgePosition is updated to badges.BadgePosition
+                  badgeContent: FittedBox(
+                    child: TextWidget(
+                      text: myCart.getCartItems.length.toString(),
+                      color: Colors.white,
+                      textSize: 15,
+                    ),
+                  ),
+                  child: Icon(
+                    _selectedIndex == 2 ? IconlyBold.buy : IconlyLight.buy,
+                  ),
+                );
+              }
             ),
             label: "Cart",
           ),

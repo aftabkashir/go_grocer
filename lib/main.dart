@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_grocer/provider/dark_theme_provider.dart';
 import 'package:go_grocer/providers/cart_provider.dart';
 import 'package:go_grocer/providers/product_provider.dart';
+import 'package:go_grocer/providers/viewed_prod_provider.dart';
+import 'package:go_grocer/providers/wishlist_provider.dart';
 import 'package:go_grocer/screens/viewed_recently/viewed_recently.dart';
 import 'package:provider/provider.dart';
 import 'package:go_grocer/screens/btm_bar.dart'; // Set to your desired initial screen
@@ -48,8 +50,8 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => themeChangeProvider),
         ChangeNotifierProvider(create: (_) => ProductsProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
-        // ChangeNotifierProvider(create: (_) => WishlistProvider()),
-        // ChangeNotifierProvider(create: (_) => ViewedProdProvider()),
+        ChangeNotifierProvider(create: (_) => WishlistProvider()),
+        ChangeNotifierProvider(create: (_) => ViewedProdProvider()),
         // ChangeNotifierProvider(create: (_) => OrdersProvider()),
       ],
       child: Consumer<DarkThemeProvider>(
