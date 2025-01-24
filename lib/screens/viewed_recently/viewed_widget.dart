@@ -1,9 +1,11 @@
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:provider/provider.dart';
 
+import '../../consts/firebase_consts.dart';
 import '../../inner_screens/product_details.dart';
 import '../../models/viewed_model.dart';
 import '../../providers/cart_provider.dart';
@@ -66,7 +68,7 @@ class _ViewedRecentlyWidgetState extends State<ViewedRecentlyWidget> {
                   height: 12,
                 ),
                 TextWidget(
-                  text: '\$${usedPrice.toStringAsFixed(2)}',
+                  text: '\Rs ${usedPrice.toStringAsFixed(2)}',
                   color: color,
                   textSize: 20,
                   isTitle: false,
@@ -84,6 +86,14 @@ class _ViewedRecentlyWidgetState extends State<ViewedRecentlyWidget> {
                     onTap: _isInCart
                         ? null
                         : () {
+                      final User? user = authInstance.currentUser;
+                      if (user == null) {
+                        GlobalMethods.errorDialog(
+                          subtitle: 'No user found, Please login first!',
+                          context: context,
+                        );
+                        return;
+                      }
                       cartProvider.addProductsTocart(
                         productId: getCurrProduct.id,
                         quantity: 1,

@@ -1,4 +1,5 @@
 import 'package:card_swiper/card_swiper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
@@ -61,6 +62,17 @@ class _ResisterScreenState extends State<ResisterScreen> {
           email: _emailTextController.text.toLowerCase().trim(),
           password: _passTextController.text.trim(),
         );
+        final User? user = authInstance.currentUser;
+        final _uid = user!.uid;
+        await FirebaseFirestore.instance.collection('users').doc(_uid).set({
+          'id':_uid,
+          'name':_fullNameController.text,
+          'email':_emailTextController.text.toLowerCase(),
+          'shipping-address': _addressTextController.text,
+          'userWish':[],
+          'userCart':[],
+          'createdAt': Timestamp.now(),
+        });
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => const BottomBarScreen(),
@@ -69,7 +81,7 @@ class _ResisterScreenState extends State<ResisterScreen> {
         print('Succefully Regestered');
       } on FirebaseException catch (error) {
         GlobalMethods.errorDialog(
-            subtitle: '{$error.message}', context: context);
+            subtitle: '${error.message}', context: context);
         setState(() {
           _isLoading = false;
         });
