@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_grocer/widgets/text_widgets.dart';
 
 class AuthButton extends StatelessWidget {
-  const AuthButton({
+   const AuthButton({
     Key? key,
     required this.fct,
     required this.buttonText,
