@@ -3,11 +3,11 @@ import 'package:go_grocer/widgets/text_widgets.dart';
 
 class AuthButton extends StatelessWidget {
    const AuthButton({
-    Key? key,
+    super.key,
     required this.fct,
     required this.buttonText,
     this.primary = Colors.white38,
-  }) : super(key: key);
+  });
   final Function fct;
   final String buttonText;
   final Color primary;

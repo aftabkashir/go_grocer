@@ -1,12 +1,10 @@
-import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:provider/provider.dart';
-
 import '../../consts/firebase_consts.dart';
-import '../../inner_screens/product_details.dart';
 import '../../models/viewed_model.dart';
 import '../../providers/cart_provider.dart';
 import '../../providers/product_provider.dart';
@@ -29,7 +27,7 @@ class _ViewedRecentlyWidgetState extends State<ViewedRecentlyWidget> {
     final viewedProdModel = Provider.of<ViewedProdModel>(context);
 
     final getCurrProduct =
-    productProvider.findProById(viewedProdModel.productId);
+    productProvider.findProdById(viewedProdModel.productId);
     double usedPrice = getCurrProduct.isOnSale
         ? getCurrProduct.salePrice
         : getCurrProduct.price;
@@ -41,7 +39,8 @@ class _ViewedRecentlyWidgetState extends State<ViewedRecentlyWidget> {
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, ProductDetails.routeName, arguments: viewedProdModel.productId);
+          // GlobalMethods.navigateTo(
+          //     ctx: context, routeName: ProductDetails.routeName);
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -68,7 +67,7 @@ class _ViewedRecentlyWidgetState extends State<ViewedRecentlyWidget> {
                   height: 12,
                 ),
                 TextWidget(
-                  text: '\Rs ${usedPrice.toStringAsFixed(2)}',
+                  text: 'Rs${usedPrice.toStringAsFixed(2)}',
                   color: color,
                   textSize: 20,
                   isTitle: false,
@@ -87,17 +86,17 @@ class _ViewedRecentlyWidgetState extends State<ViewedRecentlyWidget> {
                         ? null
                         : () {
                       final User? user = authInstance.currentUser;
+
                       if (user == null) {
                         GlobalMethods.errorDialog(
-                          subtitle: 'No user found, Please login first!',
-                          context: context,
-                        );
+                            subtitle: 'No user found, Please login first',
+                            context: context);
                         return;
                       }
-                      cartProvider.addProductsTocart(
-                        productId: getCurrProduct.id,
-                        quantity: 1,
-                      );
+                      // cartProvider.addProductsToCart(
+                      //   productId: getCurrProduct.id,
+                      //   quantity: 1,
+                      // );
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),

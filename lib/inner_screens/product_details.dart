@@ -43,7 +43,7 @@ class _ProductDetailsState extends State<ProductDetails> {
     final cartProvider = Provider.of<CartProvider>(context);
     final wishlistProvider = Provider.of<WishlistProvider>(context);
     final productId = ModalRoute.of(context)!.settings.arguments as String;
-    final getCurrProduct = productProvider.findProById(productId);
+    final getCurrProduct = productProvider.findProdById(productId);
     double usedPrice = getCurrProduct.isOnSale
         ? getCurrProduct.salePrice
         : getCurrProduct.price;
@@ -51,26 +51,20 @@ class _ProductDetailsState extends State<ProductDetails> {
     bool? _isInCart = cartProvider.getCartItems.containsKey(getCurrProduct.id);
 
     bool? _isInWishlist =
-        wishlistProvider.getWishlistItems.containsKey(getCurrProduct.id);
+    wishlistProvider.getWishlistItems.containsKey(getCurrProduct.id);
 
     final viewedProdProvider = Provider.of<ViewedProdProvider>(context);
-    return PopScope(
-      canPop: true, // Indicates that this widget supports the pop action
-      onPopInvokedWithResult: (didPop, result) {
-        if (didPop) {
-          // Action to be performed after a successful pop
-          viewedProdProvider.addProductToHistory(productId: productId);
-        }
-        // You can also use the `result` if needed
-        // for example, if you need to process data passed back when popping the screen
+    return WillPopScope(
+      onWillPop: () async {
+        viewedProdProvider.addProductToHistory(productId: productId);
+        return true;
       },
-
       child: Scaffold(
         appBar: AppBar(
             leading: InkWell(
               borderRadius: BorderRadius.circular(12),
               onTap: () =>
-                  Navigator.canPop(context) ? Navigator.pop(context) : null,
+              Navigator.canPop(context) ? Navigator.pop(context) : null,
               child: Icon(
                 IconlyLight.arrowLeft2,
                 color: color,
@@ -104,7 +98,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                 children: [
                   Padding(
                     padding:
-                        const EdgeInsets.only(top: 20, left: 30, right: 30),
+                    const EdgeInsets.only(top: 20, left: 30, right: 30),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -125,13 +119,13 @@ class _ProductDetailsState extends State<ProductDetails> {
                   ),
                   Padding(
                     padding:
-                        const EdgeInsets.only(top: 20, left: 30, right: 30),
+                    const EdgeInsets.only(top: 20, left: 30, right: 30),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         TextWidget(
-                          text: '\Rs ${usedPrice.toStringAsFixed(2)}',
+                          text: 'Rs${usedPrice.toStringAsFixed(2)}',
                           color: Colors.green,
                           textSize: 22,
                           isTitle: true,
@@ -148,7 +142,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                         Visibility(
                           visible: getCurrProduct.isOnSale ? true : false,
                           child: Text(
-                            '\$${getCurrProduct.price.toStringAsFixed(2)}',
+                            'Rs${getCurrProduct.price.toStringAsFixed(2)}',
                             style: TextStyle(
                                 fontSize: 15,
                                 color: color,
@@ -201,8 +195,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                         child: TextField(
                           controller: _quantityTextController,
                           key: const ValueKey('quantity'),
-                          keyboardType: TextInputType.none,
-                          style: TextStyle(color: color, fontSize: 20),
+                          keyboardType: TextInputType.number,
                           maxLines: 1,
                           decoration: const InputDecoration(
                             border: UnderlineInputBorder(),
@@ -271,7 +264,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   children: [
                                     TextWidget(
                                       text:
-                                          '\Rs ${totalPrice.toStringAsFixed(2)}/',
+                                      'Rs${totalPrice.toStringAsFixed(2)}/',
                                       color: color,
                                       textSize: 20,
                                       isTitle: true,
@@ -299,31 +292,30 @@ class _ProductDetailsState extends State<ProductDetails> {
                               onTap: _isInCart
                                   ? null
                                   : () {
-                                      // if (_isInCart) {
-                                      //   return;
-                                      // }
+                                // if (_isInCart) {
+                                //   return;
+                                // }
+                                final User? user =
+                                    authInstance.currentUser;
 
-                                      final User? user =
-                                          authInstance.currentUser;
-                                      if (user == null) {
-                                        GlobalMethods.errorDialog(
-                                          subtitle:
-                                              'No user found, Please login first!',
-                                          context: context,
-                                        );
-                                        return;
-                                      }
-                                      cartProvider.addProductsTocart(
-                                          productId: getCurrProduct.id,
-                                          quantity: int.parse(
-                                              _quantityTextController.text));
-                                    },
+                                if (user == null) {
+                                  GlobalMethods.errorDialog(
+                                      subtitle:
+                                      'No user found, Please login first',
+                                      context: context);
+                                  return;
+                                }
+                                // cartProvider.addProductsToCart(
+                                //     productId: getCurrProduct.id,
+                                //     quantity: int.parse(
+                                //         _quantityTextController.text));
+                              },
                               borderRadius: BorderRadius.circular(10),
                               child: Padding(
                                   padding: const EdgeInsets.all(12.0),
                                   child: TextWidget(
                                       text:
-                                          _isInCart ? 'In cart' : 'Add to cart',
+                                      _isInCart ? 'In cart' : 'Add to cart',
                                       color: Colors.white,
                                       textSize: 18)),
                             ),

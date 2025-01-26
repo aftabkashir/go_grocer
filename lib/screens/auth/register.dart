@@ -4,10 +4,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:go_grocer/screens/auth/login.dart';
-import 'package:go_grocer/screens/btm_bar.dart';
 import 'package:go_grocer/services/global_methods.dart';
 import '../../consts/constss.dart';
 import '../../consts/firebase_consts.dart';
+import '../../fetch_screen.dart';
 import '../../services/utils.dart';
 import '../../widgets/auth_button.dart';
 import '../../widgets/text_widgets.dart';
@@ -75,7 +75,7 @@ class _ResisterScreenState extends State<ResisterScreen> {
         });
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => const BottomBarScreen(),
+            builder: (context) => const FetchScreen(),
           ),
         );
         print('Succefully Regestered');

@@ -10,6 +10,7 @@ import 'package:go_grocer/services/global_methods.dart';
 import 'package:go_grocer/widgets/text_widgets.dart';
 import '../../consts/constss.dart';
 import '../../consts/firebase_consts.dart';
+import '../../fetch_screen.dart';
 import '../../services/utils.dart';
 import '../../widgets/auth_button.dart';
 import '../../widgets/google_button.dart';
@@ -54,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => const BottomBarScreen(),
+            builder: (context) => const FetchScreen(),
           ),
         );
         print('Succefully Logged in');
