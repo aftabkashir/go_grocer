@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:go_grocer/consts/constss.dart';
-import 'package:go_grocer/models/products_model.dart';
-import 'package:go_grocer/providers/product_provider.dart';
-import 'package:go_grocer/widgets/empty_products_widget.dart';
-import 'package:go_grocer/widgets/feed_items.dart';
 import 'package:provider/provider.dart';
-
+import '../models/products_model.dart';
+import '../providers/product_provider.dart';
 import '../services/utils.dart';
 import '../widgets/back_widget.dart';
+import '../widgets/empty_products_widget.dart';
+import '../widgets/feed_items.dart';
 import '../widgets/text_widgets.dart';
 
 class CategoryScreen extends StatefulWidget {
@@ -19,12 +17,12 @@ class CategoryScreen extends StatefulWidget {
 }
 
 class _CategoryScreenState extends State<CategoryScreen> {
-  final TextEditingController _searchTextController = TextEditingController();
+  final TextEditingController? _searchTextController = TextEditingController();
   final FocusNode _searchTextFocusNode = FocusNode();
-
+  List<ProductModel> listProdcutSearch = [];
   @override
   void dispose() {
-    _searchTextController.dispose();
+    _searchTextController!.dispose();
     _searchTextFocusNode.dispose();
     super.dispose();
   }
@@ -33,10 +31,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
   Widget build(BuildContext context) {
     final Color color = Utils(context).color;
     Size size = Utils(context).getScreenSize;
-    final productProviders = Provider.of<ProductsProvider>(context);
+    final productsProvider = Provider.of<ProductsProvider>(context);
     final catName = ModalRoute.of(context)!.settings.arguments as String;
-    List<ProductModel> productByCat = productProviders.findByCategory(catName);
-
+    List<ProductModel> productByCat = productsProvider.findByCategory(catName);
     return Scaffold(
       appBar: AppBar(
         leading: const BackWidget(),
@@ -46,82 +43,83 @@ class _CategoryScreenState extends State<CategoryScreen> {
         title: TextWidget(
           text: catName,
           color: color,
-          textSize: 26,
+          textSize: 20.0,
           isTitle: true,
         ),
       ),
       body: productByCat.isEmpty
           ? const EmptyProdWidget(
-              text: 'No products belong to this category!',
-            )
-          : Padding(
+        text: 'No products belong to this category',
+      )
+          : SingleChildScrollView(
+        child: Column(children: [
+          Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                // Search Field
-                SizedBox(
-                  height: kBottomNavigationBarHeight,
-                  child: TextField(
-                    focusNode: _searchTextFocusNode,
-                    controller: _searchTextController,
-                    onChanged: (value) {
-                      setState(() {});
+            child: SizedBox(
+              height: kBottomNavigationBarHeight,
+              child: TextField(
+                focusNode: _searchTextFocusNode,
+                controller: _searchTextController,
+                onChanged: (valuee) {
+                  setState(() {
+                    listProdcutSearch =
+                        productsProvider.searchQuery(valuee);
+                  });
+                },
+                decoration: InputDecoration(
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                        color: Colors.greenAccent, width: 1),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                        color: Colors.greenAccent, width: 1),
+                  ),
+                  hintText: "What's in your mind",
+                  prefixIcon: const Icon(Icons.search),
+                  suffix: IconButton(
+                    onPressed: () {
+                      _searchTextController!.clear();
+                      _searchTextFocusNode.unfocus();
                     },
-                    style: TextStyle(color: color),
-                    decoration: InputDecoration(
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                            color: Colors.greenAccent, width: 1),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                            color: Colors.greenAccent, width: 1),
-                      ),
-                      hintText: "Search here",
-                      hintStyle: TextStyle(color: color.withOpacity(0.5)),
-                      prefixIcon: Icon(Icons.search, color: color),
-                      suffix: IconButton(
-                        onPressed: () {
-                          _searchTextController.clear();
-                          _searchTextFocusNode.unfocus();
-                        },
-                        icon: Icon(
-                          Icons.close,
-                          color: _searchTextFocusNode.hasFocus
-                              ? Colors.red
-                              : color,
-                        ),
-                      ),
+                    icon: Icon(
+                      Icons.close,
+                      color: _searchTextFocusNode.hasFocus
+                          ? Colors.red
+                          : color,
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Expanded(
-                  child: GridView.count(
-                    // shrinkWrap: true,
-                    // physics: const NeverScrollableScrollPhysics(),
-                    crossAxisCount: 2,
-                    padding: EdgeInsets.zero,
-                    // crossAxisSpacing: 10,
-                    // mainAxisSpacing: 10,
-                    childAspectRatio: 0.79, // Adjusted aspect ratio
-                    children: List.generate(
-                      productByCat.length,
-                      (index) {
-                        return ChangeNotifierProvider.value(
-                            value: productByCat[index],
-                            child: const FeedsWidget());
-                      },
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
+          _searchTextController!.text.isNotEmpty &&
+              listProdcutSearch.isEmpty
+              ? const EmptyProdWidget(
+              text: 'No products found, please try another keyword')
+              : GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            padding: EdgeInsets.zero,
+            // crossAxisSpacing: 10,
+            childAspectRatio: size.width / (size.height * 0.59),
+            children: List.generate(
+                _searchTextController!.text.isNotEmpty
+                    ? listProdcutSearch.length
+                    : productByCat.length, (index) {
+              return ChangeNotifierProvider.value(
+                value: _searchTextController!.text.isNotEmpty
+                    ? listProdcutSearch[index]
+                    : productByCat[index],
+                child: const FeedsWidget(),
+              );
+            }),
+          ),
+        ]),
+      ),
     );
   }
 }

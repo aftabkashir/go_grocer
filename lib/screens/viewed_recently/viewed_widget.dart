@@ -27,7 +27,7 @@ class _ViewedRecentlyWidgetState extends State<ViewedRecentlyWidget> {
     final viewedProdModel = Provider.of<ViewedProdModel>(context);
 
     final getCurrProduct =
-    productProvider.findProdById(viewedProdModel.productId);
+        productProvider.findProdById(viewedProdModel.productId);
     double usedPrice = getCurrProduct.isOnSale
         ? getCurrProduct.salePrice
         : getCurrProduct.price;
@@ -84,20 +84,21 @@ class _ViewedRecentlyWidgetState extends State<ViewedRecentlyWidget> {
                     borderRadius: BorderRadius.circular(12),
                     onTap: _isInCart
                         ? null
-                        : () {
-                      final User? user = authInstance.currentUser;
+                        : () async {
+                            final User? user = authInstance.currentUser;
 
-                      if (user == null) {
-                        GlobalMethods.errorDialog(
-                            subtitle: 'No user found, Please login first',
-                            context: context);
-                        return;
-                      }
-                      // cartProvider.addProductsToCart(
-                      //   productId: getCurrProduct.id,
-                      //   quantity: 1,
-                      // );
-                    },
+                            if (user == null) {
+                              GlobalMethods.errorDialog(
+                                  subtitle: 'No user found, Please login first',
+                                  context: context);
+                              return;
+                            }
+                            await GlobalMethods.addToCart(
+                                productId: getCurrProduct.id,
+                                quantity: 1,
+                                context: context);
+                            await cartProvider.fetchCart();
+                          },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Icon(

@@ -10,6 +10,7 @@ import '../models/products_model.dart';
 import '../providers/product_provider.dart';
 import '../services/global_methods.dart';
 import '../services/utils.dart';
+import '../widgets/empty_products_widget.dart';
 import '../widgets/feed_items.dart';
 import '../widgets/on_sale_widget.dart';
 import '../widgets/text_widgets.dart';
@@ -24,7 +25,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchTextController = TextEditingController();
   final FocusNode _searchTextFocusNode = FocusNode();
-
+  List<ProductModel> listProdcutSearch = [];
   final List<Map<String, dynamic>> catInfo = [
     {'imgPath': 'assets/images/cat/fruits.png', 'catText': 'Fruits'},
     {'imgPath': 'assets/images/cat/veg.png', 'catText': 'Vegetables'},
@@ -48,9 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Size size = utils.getScreenSize;
     final productProviders = Provider.of<ProductsProvider>(context);
     List<ProductModel> allProducts = productProviders.getProducts;
-    List<ProductModel> productsOnSale= productProviders.getOnSaleProducts;
-    // final catName = ModalRoute.of(context)!.settings.arguments as String;
-    // List<ProductModel> productByCat = productProviders.findByCategory(catName);
+    List<ProductModel> productsOnSale = productProviders.getOnSaleProducts;
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -67,7 +66,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   bottomRight: Radius.circular(30),
                 ),
               ),
-              // Use card color as the background
               child: Padding(
                 padding: const EdgeInsets.only(top: 30),
                 child: Column(
@@ -79,24 +77,28 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Image.asset(
                           'assets/images/logo.png',
                           height: size.width * 0.12,
-                          width: size.height * 1,
-                          alignment: Alignment.topCenter,
+                          width: size.height * 100,
+                          alignment: Alignment.bottomLeft,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 10,),
+                    const SizedBox(
+                      height: 5,
+                    ),
 
-                    // Search Bar
                     Padding(
                       padding: const EdgeInsets.only(
-                          left: 20, top: 5, right: 20, bottom: 5),
+                          left: 20, top: 5, right: 20, bottom: 15),
                       child: SizedBox(
-                        height: 60,
+                        height: 50,
                         child: TextField(
                           focusNode: _searchTextFocusNode,
                           controller: _searchTextController,
-                          onChanged: (value) {
-                            setState(() {});
+                          onChanged: (valuee) {
+                            setState(() {
+                              listProdcutSearch =
+                                  productProviders.searchQuery(valuee);
+                            });
                           },
                           style: TextStyle(color: color),
                           decoration: InputDecoration(
@@ -130,27 +132,40 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     const SizedBox(height: 10),
+                    // Display "No products found" if no search results
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 5,),
+            const SizedBox(
+              height: 5,
+            ),
 
             // Categories Section
             Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.only(
+                    left: 20,
+                    right: 20,
+                    top: 10,
+                    bottom: 10,
+                  ),
                   child: TextWidget(
-                    text: 'Categories',
-                    color: color,
-                    textSize: 22,
+                    text:
+                        "Welcome to your ultimate grocery destination,\n where convenience meets quality!\n😊\n__________",
+                    color: Colors.red,
+                    textSize: 16,
                     isTitle: true,
+                    textAlign: TextAlign.center,
+
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 5,),
+            const SizedBox(
+              height: 5,
+            ),
             SizedBox(
               height: 120,
               child: ListView.builder(
@@ -163,9 +178,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         // Handle category tap
                         Navigator.pushNamed(
-                            context,
-                            CategoryScreen.routeName,
-                            arguments: catInfo[index]['catText'],
+                          context,
+                          CategoryScreen.routeName,
+                          arguments: catInfo[index]['catText'],
                         );
                       },
                       child: Column(
@@ -190,49 +205,51 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 5),
 
             // Custom Swiper
-            SizedBox(
-              height: size.height * 0.25,
-              width: size.width * 1,
-              child: Swiper(
-                loop: true, // Ensures infinite looping
-                viewportFraction:
-                    0.8, // Shrinks each item slightly to show parts of adjacent ones
-                scale: 0.9,
-                layout: SwiperLayout.STACK,
-                autoplay: true,
-                customLayoutOption: CustomLayoutOption(
-                  startIndex: 2,
-                  stateCount: 3,
-                )
-                  ..addRotate([
-                    -60.0 / 180 * 3.14,
-                    0.0,
-                    -40.0 / 180 * 3.14,
-                  ])
-                  ..addTranslate([
-                    const Offset(-370.0, -40.0),
-                    const Offset(0.0, 0.0),
-                    const Offset(370.0, -40.0),
-                  ]),
-                itemWidth: 380.0,
-                itemHeight: 150.0,
-                itemBuilder: (context, index) {
-                  return ClipRRect(
-                    borderRadius:
-                        BorderRadius.circular(15), // Apply border radius
-                    child: Container(
-                      color: Colors.black,
-                      child: Image.asset(
-                        Constss.offerImages[index], // Your offer images here
-                        fit: BoxFit
-                            .cover, // Ensure the image covers the entire area
+            Padding(
+              padding: const EdgeInsets.only(left: 10,right: 10),
+              child: SizedBox(
+                height: size.height * 0.20,
+                width: size.width * 1,
+                child: Swiper(
+                  loop: true,
+                  viewportFraction: 0.8,
+                  scale: 0.8,
+                  layout: SwiperLayout.STACK,
+                  autoplay: true,
+                  customLayoutOption: CustomLayoutOption(
+                    startIndex: 2,
+                    stateCount: 3,
+                  )
+                    ..addRotate([
+                      -60.0 / 180 * 3.14,
+                      0.0,
+                      -40.0 / 180 * 3.14,
+                    ])
+                    ..addTranslate([
+                      const Offset(-370.0, -40.0),
+                      const Offset(0.0, 0.0),
+                      const Offset(370.0, -40.0),
+                    ]),
+                  itemWidth: 380.0,
+                  itemHeight: 200.0,
+                  itemBuilder: (context, index) {
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Container(
+                        color: Colors.black,
+                        child: Image.asset(
+                          Constss.offerImages[index],
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ),
-                  );
-                },
-                itemCount: Constss.offerImages.length,
+                    );
+                  },
+                  itemCount: Constss.offerImages.length,
+                ),
               ),
             ),
+
+            // On Sale Products Section
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -259,6 +276,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
+
+            // Display On Sale Products
             Row(
               children: [
                 RotatedBox(
@@ -283,14 +302,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: SizedBox(
                     height: size.height * 0.25,
                     child: ListView.builder(
-                      itemCount: productsOnSale.length< 10?productsOnSale.length:10,
+                      itemCount: productsOnSale.length < 10
+                          ? productsOnSale.length
+                          : 10,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (ctx, index) {
                         return ChangeNotifierProvider.value(
-                          value: null,
-                          child:ChangeNotifierProvider.value(
-                              value: productsOnSale[index],
-                              child: const OnSaleWidget()),
+                          value: productsOnSale[index],
+                          child: const OnSaleWidget(),
                         );
                       },
                     ),
@@ -328,25 +347,27 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
-            // Product GridView
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              padding: EdgeInsets.zero,
-              childAspectRatio: size.width / (size.height * 0.61),
-              children: List.generate(
-                  allProducts.length < 4
-                      ? allProducts.length
-                      : 4, (index) {
-                return ChangeNotifierProvider.value(
-                      value: allProducts[index],
-                      child: FeedsWidget(
-
+            // Display Products Grid
+            _searchTextController!.text.isNotEmpty &&
+                listProdcutSearch.isEmpty
+                ? const EmptyProdWidget(
+                text: 'No products found, please try another keyword')
+                : GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: 2,
+                    padding: EdgeInsets.zero,
+                    childAspectRatio: size.width / (size.height * 0.61),
+                    children: List.generate(
+                      allProducts.length < 4 ? allProducts.length : 4,
+                      (index) {
+                        return ChangeNotifierProvider.value(
+                          value: allProducts[index],
+                          child: const FeedsWidget(),
+                        );
+                      },
+                    ),
                   ),
-                );
-              }),
-            ),
           ],
         ),
       ),

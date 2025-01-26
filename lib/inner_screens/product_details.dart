@@ -51,7 +51,7 @@ class _ProductDetailsState extends State<ProductDetails> {
     bool? _isInCart = cartProvider.getCartItems.containsKey(getCurrProduct.id);
 
     bool? _isInWishlist =
-    wishlistProvider.getWishlistItems.containsKey(getCurrProduct.id);
+        wishlistProvider.getWishlistItems.containsKey(getCurrProduct.id);
 
     final viewedProdProvider = Provider.of<ViewedProdProvider>(context);
     return WillPopScope(
@@ -64,7 +64,7 @@ class _ProductDetailsState extends State<ProductDetails> {
             leading: InkWell(
               borderRadius: BorderRadius.circular(12),
               onTap: () =>
-              Navigator.canPop(context) ? Navigator.pop(context) : null,
+                  Navigator.canPop(context) ? Navigator.pop(context) : null,
               child: Icon(
                 IconlyLight.arrowLeft2,
                 color: color,
@@ -98,7 +98,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                 children: [
                   Padding(
                     padding:
-                    const EdgeInsets.only(top: 20, left: 30, right: 30),
+                        const EdgeInsets.only(top: 20, left: 30, right: 30),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -119,7 +119,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                   ),
                   Padding(
                     padding:
-                    const EdgeInsets.only(top: 20, left: 30, right: 30),
+                        const EdgeInsets.only(top: 20, left: 30, right: 30),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -197,6 +197,12 @@ class _ProductDetailsState extends State<ProductDetails> {
                           key: const ValueKey('quantity'),
                           keyboardType: TextInputType.number,
                           maxLines: 1,
+                          style: TextStyle(
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
+                          ),
                           decoration: const InputDecoration(
                             border: UnderlineInputBorder(),
                           ),
@@ -264,7 +270,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                   children: [
                                     TextWidget(
                                       text:
-                                      'Rs${totalPrice.toStringAsFixed(2)}/',
+                                          'Rs${totalPrice.toStringAsFixed(2)}/',
                                       color: color,
                                       textSize: 20,
                                       isTitle: true,
@@ -291,31 +297,37 @@ class _ProductDetailsState extends State<ProductDetails> {
                             child: InkWell(
                               onTap: _isInCart
                                   ? null
-                                  : () {
-                                // if (_isInCart) {
-                                //   return;
-                                // }
-                                final User? user =
-                                    authInstance.currentUser;
+                                  : () async {
+                                      // if (_isInCart) {
+                                      //   return;
+                                      // }
+                                      final User? user =
+                                          authInstance.currentUser;
 
-                                if (user == null) {
-                                  GlobalMethods.errorDialog(
-                                      subtitle:
-                                      'No user found, Please login first',
-                                      context: context);
-                                  return;
-                                }
-                                // cartProvider.addProductsToCart(
-                                //     productId: getCurrProduct.id,
-                                //     quantity: int.parse(
-                                //         _quantityTextController.text));
-                              },
+                                      if (user == null) {
+                                        GlobalMethods.errorDialog(
+                                            subtitle:
+                                                'No user found, Please login first',
+                                            context: context);
+                                        return;
+                                      }
+                                      await GlobalMethods.addToCart(
+                                          productId: getCurrProduct.id,
+                                          quantity: int.parse(
+                                            _quantityTextController.text,
+                                          ),
+                                          context: context);
+                                      await cartProvider.fetchCart();                                      // cartProvider.addProductsToCart(
+                                      //     productId: getCurrProduct.id,
+                                      //     quantity: int.parse(
+                                      //         _quantityTextController.text));
+                                    },
                               borderRadius: BorderRadius.circular(10),
                               child: Padding(
                                   padding: const EdgeInsets.all(12.0),
                                   child: TextWidget(
                                       text:
-                                      _isInCart ? 'In cart' : 'Add to cart',
+                                          _isInCart ? 'In cart' : 'Add to cart',
                                       color: Colors.white,
                                       textSize: 18)),
                             ),

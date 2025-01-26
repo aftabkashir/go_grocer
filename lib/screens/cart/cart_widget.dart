@@ -14,13 +14,16 @@ import '../../widgets/text_widgets.dart';
 
 class CartWidget extends StatefulWidget {
   const CartWidget({super.key, required this.q});
+
   final int q;
+
   @override
   State<CartWidget> createState() => _CartWidgetState();
 }
 
 class _CartWidgetState extends State<CartWidget> {
   final _quantityTextController = TextEditingController();
+
   @override
   void initState() {
     _quantityTextController.text = widget.q.toString();
@@ -46,7 +49,7 @@ class _CartWidgetState extends State<CartWidget> {
     final cartProvider = Provider.of<CartProvider>(context);
     final wishlistProvider = Provider.of<WishlistProvider>(context);
     bool? _isInWishlist =
-    wishlistProvider.getWishlistItems.containsKey(getCurrProduct.id);
+        wishlistProvider.getWishlistItems.containsKey(getCurrProduct.id);
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, ProductDetails.routeName,
@@ -100,9 +103,9 @@ class _CartWidgetState extends State<CartWidget> {
                                         cartModel.productId);
                                     setState(() {
                                       _quantityTextController.text = (int.parse(
-                                          _quantityTextController
-                                              .text) -
-                                          1)
+                                                  _quantityTextController
+                                                      .text) -
+                                              1)
                                           .toString();
                                     });
                                   }
@@ -116,6 +119,12 @@ class _CartWidgetState extends State<CartWidget> {
                                   controller: _quantityTextController,
                                   keyboardType: TextInputType.number,
                                   maxLines: 1,
+                                  style: TextStyle(
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
                                   decoration: const InputDecoration(
                                     focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(),
@@ -143,8 +152,8 @@ class _CartWidgetState extends State<CartWidget> {
                                       cartModel.productId);
                                   setState(() {
                                     _quantityTextController.text = (int.parse(
-                                        _quantityTextController.text) +
-                                        1)
+                                                _quantityTextController.text) +
+                                            1)
                                         .toString();
                                   });
                                 },
@@ -179,7 +188,8 @@ class _CartWidgetState extends State<CartWidget> {
                             isInWishlist: _isInWishlist,
                           ),
                           TextWidget(
-                            text: 'Rs${usedPrice.toStringAsFixed(2)}',
+                            text:
+                                'Rs ${(usedPrice * int.parse(_quantityTextController.text)).toStringAsFixed(2)}',
                             color: color,
                             textSize: 18,
                             maxLines: 1,

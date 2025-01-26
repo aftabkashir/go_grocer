@@ -17,6 +17,7 @@ import '../../widgets/google_button.dart';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = '/LoginScreen';
+
   const LoginScreen({super.key});
 
   @override
@@ -39,6 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   bool _isLoading = false;
+
   void _submitFormonLogin() async {
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
@@ -108,7 +110,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center, // Centered alignment
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  // Centered alignment
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     const SizedBox(
@@ -120,7 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Image.asset(
                         'assets/images/logo.png',
                         height: size.width * 0.14,
-                        width: size.width * 0.45,// Path to your logo
+                        width: size.width * 0.45, // Path to your logo
                         fit: BoxFit.contain,
                         alignment: Alignment.center,
                       ),
@@ -256,7 +259,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(
                       height: 10,
                     ),
-                     GoogleButton(),
+                    GoogleButton(),
                     const SizedBox(
                       height: 10,
                     ),
@@ -292,9 +295,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     AuthButton(
                       fct: () {
-                        Navigator.pushReplacementNamed(
-                          context,
-                          BottomBarScreen.routeName,
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const FetchScreen(),
+                          ),
                         );
                       },
                       buttonText: 'Continue as a guest',
@@ -321,7 +325,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
                                 GlobalMethods.nevigateTo(
-                                    ctx: context, routeName: ResisterScreen.routeName);
+                                    ctx: context,
+                                    routeName: ResisterScreen.routeName);
                               },
                           ),
                         ],

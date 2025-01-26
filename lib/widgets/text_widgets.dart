@@ -8,17 +8,20 @@ class TextWidget extends StatelessWidget {
     required this.textSize,
     this.isTitle = false,
     this.maxLines = 10,
+    this.textAlign,
   });
   final String text;
   final Color color;
   final double textSize;
   bool isTitle;
   int maxLines = 10;
+  final TextAlign? textAlign;
 
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
+      textAlign: textAlign,
       maxLines: maxLines,
       style: TextStyle(
         overflow: TextOverflow.ellipsis,

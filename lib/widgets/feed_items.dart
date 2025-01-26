@@ -19,12 +19,14 @@ class FeedsWidget extends StatefulWidget {
   const FeedsWidget({
     super.key,
   });
+
   @override
   State<FeedsWidget> createState() => _FeedsWidgetState();
 }
 
 class _FeedsWidgetState extends State<FeedsWidget> {
   final _quantityTextController = TextEditingController();
+
   @override
   void initState() {
     _quantityTextController.text = '1'; //${widget.quantity}
@@ -45,7 +47,8 @@ class _FeedsWidgetState extends State<FeedsWidget> {
     final cartProvider = Provider.of<CartProvider>(context);
     bool? _isInCart = cartProvider.getCartItems.containsKey(productModel.id);
     final wishlistProvider = Provider.of<WishlistProvider>(context);
-    bool? _isInWishlist = wishlistProvider.getWishlistItems.containsKey(productModel.id);
+    bool? _isInWishlist =
+        wishlistProvider.getWishlistItems.containsKey(productModel.id);
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -176,25 +179,29 @@ class _FeedsWidgetState extends State<FeedsWidget> {
               child: TextButton(
                 onPressed: _isInCart
                     ? null
-                    : () {
+                    : () async {
+                        final User? user = authInstance.currentUser;
+                        if (user == null) {
+                          GlobalMethods.errorDialog(
+                            subtitle: 'No user found, Please login first!',
+                            context: context,
+                          );
+                          return;
+                        }
 
-                  final User? user = authInstance.currentUser;
-                  if (user == null) {
-                    GlobalMethods.errorDialog(
-                      subtitle: 'No user found, Please login first!',
-                      context: context,
-                    );
-                    return;
-                  }
-                        // if(_isInCart){
-                        //   return;
-                        // }
-                        cartProvider.addProductsTocart(
-                          productId: productModel.id,
-                          quantity: int.parse(
-                            _quantityTextController.text,
-                          ),
-                        );
+                        // cartProvider.addProductsTocart(
+                        //   productId: productModel.id,
+                        //   quantity: int.parse(
+                        //     _quantityTextController.text,
+                        //   ),
+                        // );
+                        await GlobalMethods.addToCart(
+                            productId: productModel.id,
+                            quantity: int.parse(
+                              _quantityTextController.text,
+                            ),
+                            context: context);
+                        await cartProvider.fetchCart();
                       },
                 style: ButtonStyle(
                     backgroundColor:
